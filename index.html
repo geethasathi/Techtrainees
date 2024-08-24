@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Rating Predictor</title>
+    <style>
+        body {
+            font-family: Lucida, sans-serif; /* Font family */
+            margin: 0;
+            padding: 0;
+            height: 100vh; /* Full viewport height */
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            background-image: url('https://i.pinimg.com/564x/d4/c6/eb/d4c6eb737f4f8f4ea97205bbe3d3608b.jpg');
+            background-size: cover; /* Cover the entire viewport */
+            background-position: center; /* Center the image */
+            background-attachment: fixed; /* Fix the background image in place */
+            background-repeat: no-repeat; /* Prevent repeating the image */
+        }
+        .container {
+            width: 75vw; /* Take up 75% of viewport width */
+            max-width: 800px; /* Maximum width for large screens */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center; /* Center text inside the container */
+            background: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
+        }
+        .logo {
+            margin-bottom: 30px; /* Space below the logo */
+        }
+        .logo img {
+            max-width: 500px; /* Size of the logo */
+            height: auto;
+        }
+        h1 {
+            color: #6D4F4F; /* Wine color for title */
+        }
+        p {
+            color: #6D4F4F; /* Wine color for text */
+        }
+        label {
+            display: block;
+            margin: 10px auto 5px; /* Center label and add spacing */
+            text-align: left;
+            width: 60%; /* Center label with input/textarea */
+            color: #6D4F4F; /* Wine color for labels */
+        }
+        select, textarea {
+            width: 60%; /* Consistent width for both select and textarea */
+            max-width: 600px; /* Limit maximum width */
+            padding: 8px;
+            margin: 10px auto; /* Center elements and add spacing */
+            border: 1px solid #6D4F4F; /* Wine color border */
+            border-radius: 4px;
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+            background-color: #9d8e83; /* Brown color for background */
+            color: white; /* White text color for better readability */
+        }
+        textarea {
+            height: 150px; /* Set a fixed height */
+            resize: vertical; /* Allow vertical resizing only */
+        }
+        textarea::placeholder {
+            color: white; /* White color for placeholder text */
+        }
+        button {
+            width: auto; /* Adjust width to fit text */
+            max-width: 200px; /* Limit maximum width */
+            background-color: #6D4F4F; /* Wine color for button background */
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 25px;
+            margin-top: 20px; /* Space above the button */
+        }
+        button:hover {
+            background-color: #857878; /* Slightly darker wine color for hover */
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f2e6e6; /* Light vintage background for result */
+            border-radius: 4px;
+            color: #b49999; /* Wine color for result text */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="logo">
+            <img src="https://i.pinimg.com/564x/56/76/0f/56760f49c1365f84937be2b9b82e2ea3.jpg" alt="Movie Rating Predictor Logo">
+        </div>
+        <h1>Movie Rating Predictor</h1>
+        <p><h3>Enter the movie details below to predict its rating.</h3></p>
+
+        <form id="ratingForm">
+            <b><label for="genre">Genre:</label></b>
+            <select id="genre" name="genre" required>
+                <option value="" disabled selected>Select Genre</option>
+                <option value="Action">Action</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Animation">Animation</option>
+                <option value="Biography">Biography</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Crime">Crime</option>
+                <option value="Documentary">Documentary</option>
+                <option value="Drama">Drama</option>
+                <option value="Family">Family</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Film-Noir">Film-Noir</option>
+                <option value="History">History</option>
+                <option value="Horror">Horror</option>
+                <option value="Music">Music</option>
+                <option value="Musical">Musical</option>
+                <option value="Mystery">Mystery</option>
+                <option value="Romance">Romance</option>
+                <option value="Sci-Fi">Sci-Fi</option>
+                <option value="Sport">Sport</option>
+                <option value="Thriller">Thriller</option>
+                <option value="War">War</option>
+                <option value="Western">Western</option>
+            </select>
+
+            <b><label for="description">Description:</label></b>
+            <textarea id="description" name="description" placeholder="Enter movie description here (100 words)..." maxlength="100" required></textarea>
+            <br>
+            
+            <button type="submit">Predict Rating</button>
+        </form>
+
+        <div id="result" class="result" style="display: none;">
+            <h2>Predicted Rating:</h2>
+            <p id="ratingOutput"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('ratingForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const genre = document.getElementById('genre').value;
+            const description = document.getElementById('description').value;
+
+            // Example API call (replace URL with your actual endpoint)
+            fetch('https://your-backend-api-url/predict-rating', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ genre, description })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('ratingOutput').textContent = data.rating || 'No rating available.';
+                document.getElementById('result').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('ratingOutput').textContent = 'Error predicting rating.';
+                document.getElementById('result').style.display = 'block';
+            });
+        });
+    </script>
+
+</body>
+</html>
+
+
